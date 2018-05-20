@@ -24,10 +24,12 @@ func resourceInstance() *schema.Resource {
 			"region": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"type": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"stackscript_id": &schema.Schema{
 				Type:     schema.TypeInt,
@@ -155,6 +157,23 @@ func resourceInstanceUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 
 		d.SetPartial("swap_size")
+	}
+
+	if d.HasChange("root_pass") || d.HasChange("image") || d.HasChange("authorized_keys") {
+		req := lingo.RebuildLinodeRequest{
+			ID:             uint(id),
+			RootPass:       GetString(d, "root_pass"),
+			Image:          GetString(d, "image"),
+			AuthorizedKeys: GetSliceString(d, "authorized_keys"),
+		}
+
+		if _, err := linode.RebuildLinode(req); err != nil {
+			return err
+		}
+
+		d.SetPartial("root_pass")
+		d.SetPartial("image")
+		d.SetPartial("authorized_keys")
 	}
 
 	if d.HasChange("label") || d.HasChange("alerts") {

@@ -7,6 +7,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"linode_domain":   resourceDomain(),
 			"linode_instance": resourceInstance(),
+			"linode_disk":     resourceDisk(),
 		},
 	}
 }
