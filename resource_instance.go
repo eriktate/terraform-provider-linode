@@ -83,12 +83,12 @@ func resourceInstanceCreate(d *schema.ResourceData, m interface{}) error {
 		SwapSize:       GetUint(d, "swap_size"),
 	}
 
-	linode, err := linode.CreateLinode(req)
+	instance, err := linode.CreateLinode(req)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(fmt.Sprintf("%d", linode.ID))
+	d.SetId(fmt.Sprintf("%d", instance.ID))
 	return nil
 }
 
@@ -98,7 +98,7 @@ func resourceInstanceRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	linode, err := linode.ViewLinode(uint(id))
+	instance, err := linode.ViewLinode(uint(id))
 	if err != nil {
 		d.SetId("")
 		return nil
@@ -117,11 +117,11 @@ func resourceInstanceRead(d *schema.ResourceData, m interface{}) error {
 		}
 	}
 
-	d.Set("label", linode.Label)
-	d.Set("image", linode.Image)
-	d.Set("region", linode.Region)
-	d.Set("region", linode.Region)
-	d.Set("type", linode.Type)
+	d.Set("label", instance.Label)
+	d.Set("image", instance.Image)
+	d.Set("region", instance.Region)
+	d.Set("region", instance.Region)
+	d.Set("type", instance.Type)
 	d.Set("swap_size", swapSize)
 
 	return nil
