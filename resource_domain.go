@@ -2,20 +2,11 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/eriktate/lingo"
 	"github.com/hashicorp/terraform/helper/schema"
 )
-
-var domainClient lingo.DomainClient
-
-func init() {
-	apiKey := os.Getenv("LINODE_API_KEY")
-	apiClient := lingo.NewAPIClient(apiKey)
-	domainClient = lingo.NewDomainClient(apiClient)
-}
 
 func resourceDomain() *schema.Resource {
 	return &schema.Resource{
@@ -48,7 +39,7 @@ func resourceDomainCreate(d *schema.ResourceData, m interface{}) error {
 		SOA:    d.Get("soa_email").(string),
 	}
 
-	domain, err := domainClient.CreateDomain(req)
+	domain, err := linode.CreateDomain(req)
 	if err != nil {
 		return err
 	}
@@ -63,7 +54,7 @@ func resourceDomainRead(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	domain, err := domainClient.ViewDomain(uint(id))
+	domain, err := linode.ViewDomain(uint(id))
 	if err != nil {
 		d.SetId("")
 		return nil
@@ -89,7 +80,7 @@ func resourceDomainUpdate(d *schema.ResourceData, m interface{}) error {
 		SOA:    d.Get("soa_email").(string),
 	}
 
-	if _, err := domainClient.UpdateDomain(req); err != nil {
+	if _, err := linode.UpdateDomain(req); err != nil {
 		return err
 	}
 
@@ -102,7 +93,7 @@ func resourceDomainDelete(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	if err := domainClient.DeleteDomain(uint(id)); err != nil {
+	if err := linode.DeleteDomain(uint(id)); err != nil {
 		return err
 	}
 
