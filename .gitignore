@@ -12,3 +12,4 @@
 *.out
 crash.log
 .terraform/
+/terraform-provider-linode
